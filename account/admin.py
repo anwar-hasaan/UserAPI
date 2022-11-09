@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import User
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin, Group
 
 class UserAdmin(BaseUserAdmin):
     list_display = ('name', 'email', 'id', 'tc', 'is_admin')
@@ -18,8 +18,9 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('email', 'name', 'tc', 'password1', 'password2'),
         }),
     )
-    search_fields = ('email',)
-    ordering = ('email', 'id')
+    search_fields = ('email', 'name',)
+    ordering = ('email', 'id', 'name', 'is_admin')
     filter_horizontal = ()
 
 admin.site.register(User, UserAdmin)
+admin.site.unregister(Group)
