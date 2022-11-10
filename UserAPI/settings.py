@@ -3,7 +3,6 @@ import os
 from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-# SECRET_KEY = 'django-insecure-6#ye^02o)ba-ag0=$x=_3ra9r-gauoi#)ku144i2utn=0_!mdu'
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = False
 
@@ -23,6 +22,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
@@ -83,6 +83,7 @@ USE_TZ = True
 
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
