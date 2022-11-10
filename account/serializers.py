@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from account.models import User
+from django.core.mail import send_mail
+from django.conf import settings
 
 from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -66,14 +68,20 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
         if user:
             uid = urlsafe_base64_encode(force_bytes(user.id)) # urlsafe dosent take int it takes bytes thats why gave forrcebytes
             token = PasswordResetTokenGenerator().make_token(user=user) # generate a randon token for given user
-            link = "http://127.0.0.1:8000/api/user/reset-password/"+ uid + "/" + token
+            if settings.DEBUG:
+                link = "http://127.0.0.1:8000/api/user/reset-password/"+ uid + "/" + token
+            else:
+                link = "https://register-manager.herokuapp.com/api/user/reset-password/"+ uid + "/" + token
             # Send email with the link
-
-            print({
-                'uid': uid,
-                'token': token,
-                'link': link
-            })
+            try:
+                send_mail(
+                    subject = 'USER: Reset User Password',
+                    message = f'Click the following link to reset your password: \n{link}',
+                    from_email = settings.EMAIL_HOST_USER,
+                    recipient_list = [email],
+                    fail_silently = False )
+            except Exception as e:
+                raise serializers.ValidationError("Your email is not valid or you're not a registered user")
             return data
         else:
             raise serializers.ValidationError("You're not a registered user, make sure you entered the same email which you gave while registration")

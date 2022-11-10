@@ -3,10 +3,11 @@ import os
 from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = 'django-insecure-6#ye^02o)ba-ag0=$x=_3ra9r-gauoi#)ku144i2utn=0_!mdu'
-DEBUG = True
+# SECRET_KEY = 'django-insecure-6#ye^02o)ba-ag0=$x=_3ra9r-gauoi#)ku144i2utn=0_!mdu'
+SECRET_KEY = os.environ['SECRET_KEY']
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['register-manager.herokuapp.com', '127.0.0.1']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,6 +56,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -114,3 +118,11 @@ CORS_ALLOWED_ORIGINS = [
 
 # for this in serializer PasswordResetTokenGenerator(), password reset token expairy
 PASSWORD_RESET_TIMEOUT=900 #900 seconds = 15 minutes
+
+# Email configarations
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_USE_TLS = True
