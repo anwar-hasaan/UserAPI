@@ -111,3 +111,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
+
+# for this in serializer PasswordResetTokenGenerator(), password reset token expairy
+PASSWORD_RESET_TIMEOUT=900 #900 seconds = 15 minutes
