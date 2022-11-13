@@ -1,28 +1,45 @@
 import requests
+import json
 
 class API_Cliant():
     def __init__(self, refresh='', access=''):
         self.refresh = refresh
         self.access = access
         
-    def login(self):
+    def login(self, email, password):
         login_url = 'https://register-manager.herokuapp.com/api/user/login'
-        credentials = {"email": "rabby12@gmail.com", "password": "11223344"}
+        credentials = {"email": email, "password": password}
         try:
             user_login = requests.post(url=login_url, data=credentials).json()
-            
             if 'errors' in user_login:
                 errors = user_login['errors']
                 print(errors)
             elif not 'errors' in user_login:
                 self.refresh = user_login['token']['refresh']
                 self.access = user_login['token']['access']
-                return user_login
+                print(user_login['message'])
+            return user_login
         except Exception as e:
-            print('Somethin wrong')
+            print('Somethin wrong while login')
+    
+    def register(self, email, name, tc, password, password2):
+        register_url = 'https://register-manager.herokuapp.com/api/user/register'
+        data = {'email': email, 'name': name, 'tc': tc, 'password': password, 'password2': password}
+        try:
+            registration = requests.post(url=register_url, data=data)
+            if 'errors' in registration:
+                errors = registration['errors']
+                print(errors)
+            elif not 'errors' in registration:
+                self.login(email, password)
+
+                # print(registration['message'])
+                # return registration
+                print(registration)
+        except Exception as e:
+            print("Something Wrong while register")
     
     def profile(self):
-        self.login()
         profile_url = 'https://register-manager.herokuapp.com/api/user/profile'
         headers = {'accept': 'application/json', 'authorization': "Bearer "+ self.access}
         
@@ -32,8 +49,10 @@ class API_Cliant():
         
 
 
+user = API_Cliant()
+# user.login()
 
 
-api = API_Cliant()
-# api.login()
-api.profile()
+user.register(name='anwar', email='anwar@gmail.com', tc=True, password='11223344', password2='11223344')
+# print('new register : '+ str(new))
+user.profile()
