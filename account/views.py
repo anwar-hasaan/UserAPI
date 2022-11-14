@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -9,6 +10,7 @@ from account.models import User
 from django.contrib.auth import authenticate
 from account.renderer import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
+import json
 
 # genarate token manually
 def get_tokens_for_user(user):
@@ -62,10 +64,21 @@ class SendPasswordResetEmailView(APIView):
             return Response({'message': 'Password reset link sent, check your email'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserPasswordResetView(APIView):
-    renderer_classes = [UserRenderer]
-    def post(self, request, uid, token, format=None):
-        serializer = UserPasswordResetSerializer(data=request.data, context={'uid': uid, 'token': token})
+# class UserPasswordResetView(APIView):
+#     renderer_classes = [UserRenderer]
+#     def post(self, request, uid, token, format=None):
+#         serializer = UserPasswordResetSerializer(data=request.data, context={'uid': uid, 'token': token})
+#         if serializer.is_valid():
+#             return Response({'message': 'Password Reset Successful'}, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+def UserPasswordResetView(request, uid, token):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        password2 = request.POST.get('password2')
+        data = {'password': password, 'password2': password2}
+        serializer = UserPasswordResetSerializer(data=data, context={'uid': uid, 'token': token})
         if serializer.is_valid():
-            return Response({'message': 'Password Reset Successful'}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # serializer = json.dumps(serializer)
+            return render(request, 'reset_password.html', context={"message": "Password Reset Success"})
+        return render(request, 'reset_password.html', context={"errors": serializer.errors['non_field_errors'][0]})
+    return render(request, 'reset_password.html')
