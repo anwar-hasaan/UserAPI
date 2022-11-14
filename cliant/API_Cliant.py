@@ -6,7 +6,7 @@ class API_Cliant():
         self.access = access
         
     def login(self, email, password):
-        login_url = 'https://register-manager.herokuapp.com/api/user/login' #'http://127.0.0.1:8000/api/user/login' #
+        login_url = 'http://127.0.0.1:8000/api/user/login' # 'https://register-manager.herokuapp.com/api/user/login' 
         headers = {'accept': 'application/json'}
         credentials = {"email": email, "password": password}
         try:
@@ -23,7 +23,7 @@ class API_Cliant():
             print('Somethin wrong while login')
     
     def register(self, email, name, tc, password, password2):
-        register_url = 'https://register-manager.herokuapp.com/api/user/register' #'http://127.0.0.1:8000/api/user/register' #
+        register_url = 'http://127.0.0.1:8000/api/user/register' # 'https://register-manager.herokuapp.com/api/user/register' #
         data = {'email': email, 'name': name, 'tc': tc, 'password': password, 'password2': password2}
         try:
             registration = requests.post(url=register_url, data=data).json()
@@ -89,9 +89,9 @@ class API_Cliant():
         print(reset_password)
 
 user = API_Cliant()
-# user.register(name='mizan', email='mizan.electronics11@gmail.com', tc=True, password='11223344', password2='11223344')
+user.register(name='mizan', email='mizan.electronics11@gmail.com', tc=True, password='11223344', password2='11223344')
 
-# user.login(email='mizan.electronics11@gmail.com', password='11112222')
+# user.login(email='mizan.electronics11@gmail.com', password='1111222')
 # user.profile() # need login() call
 # user.change_password(password='11223344', password2='11223344') # need login() call
 # user.reset_password_request(email='mizan.electronics11@gmail.com')

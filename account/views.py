@@ -6,11 +6,9 @@ from rest_framework import status
 from account.serializers import (UserRegistrationSerializer, UserLoginSerializer, 
                                 UserProfileSerializer, UserChangePasswordSerializer,
                                 SendPasswordResetEmailSerializer, UserPasswordResetSerializer, )
-from account.models import User
 from django.contrib.auth import authenticate
 from account.renderer import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
-import json
 
 # genarate token manually
 def get_tokens_for_user(user):
@@ -71,6 +69,8 @@ class SendPasswordResetEmailView(APIView):
 #         if serializer.is_valid():
 #             return Response({'message': 'Password Reset Successful'}, status=status.HTTP_200_OK)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# This views is moved to function based cause we have frontend with this view
 def UserPasswordResetView(request, uid, token):
     if request.method == 'POST':
         password = request.POST.get('password')
@@ -78,7 +78,6 @@ def UserPasswordResetView(request, uid, token):
         data = {'password': password, 'password2': password2}
         serializer = UserPasswordResetSerializer(data=data, context={'uid': uid, 'token': token})
         if serializer.is_valid():
-            # serializer = json.dumps(serializer)
             return render(request, 'reset_password.html', context={"message": "Password Reset Success"})
         return render(request, 'reset_password.html', context={"errors": serializer.errors['non_field_errors'][0]})
     return render(request, 'reset_password.html')
